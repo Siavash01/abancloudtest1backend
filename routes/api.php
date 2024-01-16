@@ -20,4 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/saveuserdata', [UserController::class, 'store']);
+Route::controller(UserController::class)->group(function () {
+    Route::post('/saveuserdata', 'store');
+    Route::get('/showuserdata', 'show');
+});

@@ -18,7 +18,11 @@ class UserController extends Controller
             $user->lastname = $request->lastname;
             $user->email = $request->email;
 
-            $user->save();
+            return $user->save();
         }
+    }
+
+    public function show() {
+        return User::all()->toJson();
     }
 }
