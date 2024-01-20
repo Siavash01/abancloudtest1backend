@@ -3,23 +3,48 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+
+use Illuminate\Support\Facades\Auth;
+use LDAP\Result;
 
 class UserController extends Controller
 {
     public function store(Request $request) {
         if ($request->has('name') &&
             $request->has('lastname') &&
-            $request->has('email')) {
+            $request->has('email') &&
+            $request->has('password')) {
 
-            $user = new User;
-            $user->name = $request->name;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
+            User::create([
+                'name' => $request->name,
+                'lastname' => $request->lastname,
+                'email' => $request->email,
+                'password' => Hash::make($request->has('password')),
+            ]);
 
-            return $user->save();
+            
         }
+    }
+
+    public function login(Request $request) {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+ 
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+ 
+            return Response('sucessful', $status=200);
+        }
+ 
+        return Response()->onlyInput('email');
     }
 
     public function show() {

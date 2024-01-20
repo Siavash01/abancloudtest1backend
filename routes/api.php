@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,5 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/saveuserdata', 'store');
     Route::get('/showuserdata', 'show');
 });
+
+Route::post('/admin', [AdminController::class, 'login']);
