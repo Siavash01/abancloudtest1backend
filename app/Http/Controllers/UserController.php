@@ -35,17 +35,22 @@ class UserController extends Controller
 
     public function login(Request $request) {
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response([
+            return Response([
                 'message' => 'Invalid credentials!'
-            ], Response::HTTP_UNAUTHORIZED);
+            ], response::HTTP_UNAUTHORIZED);
         }
 
+        /** @var \App\Models\User $user **/
+
         $user = Auth::user();
+        
 
-        return $user;
-    }
+        $token = $user->createToken('token')->plainTextToken;
 
-    public function show() {
-        return User::all()->toJson();
+        $cookie = cookie('jwt', $token, 60 * 24);
+
+        return response([
+            'message' => 'Success'
+        ])->withCookie($cookie);
     }
 }

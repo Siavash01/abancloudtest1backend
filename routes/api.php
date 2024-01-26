@@ -17,13 +17,10 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::controller(UserController::class)->group(function () {
-    Route::post('/saveuserdata', 'store');
-    Route::get('/showuserdata', 'show');
-});
-
 Route::post('/admin', [AdminController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/showuserdata', [AdminController::class, 'showUsersData']);
+});
+
+Route::post('/saveuserdata', [UserController::class, 'store']);

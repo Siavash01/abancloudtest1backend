@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Response;
 
+use App\Models\User;
+
 
 class AdminController extends Controller
 {
@@ -17,8 +19,21 @@ class AdminController extends Controller
             ], response::HTTP_UNAUTHORIZED);
         }
 
-        $user = Auth::user();
+        /** @var \App\Models\User $user **/
 
-        return $user;
+        $user = Auth::user();
+        
+
+        $token = $user->createToken('token')->plainTextToken;
+
+        $cookie = cookie('jwt', $token, 60 * 24);
+
+        return response([
+            'message' => 'Success'
+        ])->withCookie($cookie);
+    }
+
+    public function showUsersData() {
+        return User::all()->toJson();
     }
 }
