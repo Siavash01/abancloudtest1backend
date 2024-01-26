@@ -5,20 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\Response;
+
+
 class AdminController extends Controller
 {
     public function login(Request $request) {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
- 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
- 
-            return Response('sucessful', $status=200);
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return Response([
+                'message' => 'Invalid credentials!'
+            ], response::HTTP_UNAUTHORIZED);
         }
- 
-        return Response()->onlyInput('email');
+
+        $user = Auth::user();
+
+        return $user;
     }
 }

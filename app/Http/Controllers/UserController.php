@@ -28,23 +28,21 @@ class UserController extends Controller
                 'password' => Hash::make('Pass!2345678'),
             ]);
 
+            return Response('sucessful', $status=200);
             
         }
     }
 
     public function login(Request $request) {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
- 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
- 
-            return Response('sucessful', $status=200);
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response([
+                'message' => 'Invalid credentials!'
+            ], Response::HTTP_UNAUTHORIZED);
         }
- 
-        return Response()->onlyInput('email');
+
+        $user = Auth::user();
+
+        return $user;
     }
 
     public function show() {
